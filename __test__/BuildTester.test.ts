@@ -1,9 +1,6 @@
-import { BuildTester } from '../index';
-
-test('My Greeter_00', () => {
-  expect(BuildTester('Carl')).toBe('Hello Carl');
-});
-
-test('My Greeter_01', () => {
-  expect(BuildTester('Jaeyoung')).toBe('Hello Jaeyoung');
-});
+import { CrudifySingleton } from '../src/CrudifySingleton';
+test("Singleton Test", () => {
+  const instance_a = CrudifySingleton.getInstance();
+  const instance_b = CrudifySingleton.getInstance();
+  expect(instance_a).toBe(instance_b);
+})
