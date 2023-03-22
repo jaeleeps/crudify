@@ -33,6 +33,7 @@
     "lib/**/*"
   ],
   "dependencies": {
+    "@google-cloud/firestore": "^6.5.0",
     "mongodb": "^5.1.0"
   }
 }
