@@ -5,7 +5,3 @@ test("Singleton Test", () => {
   const instance_b = CrudifyClient.getInstance();
   expect(instance_a).toBe(instance_b);
 })
-
-describe('createFreeCourse', () => {
-
-});

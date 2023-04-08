@@ -5,7 +5,7 @@ import { testFirebaseConfig } from './env/tesFirebaseConfig';
 import firebase from 'firebase';
 import initializeApp = firebase.initializeApp;
 import { MongoClient } from 'mongodb';
-import { coneectionURI, testMongoDBAtlasPassword } from './env/testMongoDBAtlasConfig';
+import { testMongoDBAtlasPassword } from './env/testMongoDBAtlasConfig';
 test("Singleton Test", () => {
   const instance_a = CrudifyClient.getInstance();
   const instance_b = CrudifyClient.getInstance();
@@ -34,8 +34,8 @@ test("Firebase Initialization Test", () => {
 
 test("MongoDB Atlas Initialization Test", async () => {
   const password: string = testMongoDBAtlasPassword;
-  const coneectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
-  const client = new MongoClient(coneectionURI);
+  const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
+  const client = new MongoClient(connectionURI);
   await client.connect();
 
   const databasesList = await client.db().admin().listDatabases();
