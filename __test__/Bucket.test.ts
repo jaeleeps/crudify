@@ -11,7 +11,7 @@ import { FirestoreBucketConfiguration } from '../src/Bucket/FirestoreBucketConfi
 import { IFirestoreConfiguration } from '../src/Bucket/FirestoreConfiguration.interface';
 import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface';
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
-import { AppClient } from '../src/type/database.enum';
+import { AppClient, AppDatabase } from '../src/type/database.enum';
 import App = firebase.app.App;
 import { database } from 'firebase-admin';
 import Reference = database.Reference;
@@ -21,21 +21,21 @@ test("Firebase Bucket Initialization Test", async () => {
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
   const firebaseBucket: Bucket = new Bucket(firebaseBucketConfig);
 
-  const appClient: AppClient = await firebaseBucket.initialize();
-  expect(appClient).not.toBe(null);
+  const db: AppDatabase = await firebaseBucket.initialize();
+  expect(db).not.toBe(null);
 })
 
 
 test("MongoDB Atlas Bucket Initialization Test", async () => {
   const password: string = testMongoDBAtlasPassword;
   const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
-  const config: IMongoConfiguration = { uri: connectionURI };
+  const config: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(config);
   const mongoBucket: Bucket = new Bucket(mongoBucketConfig);
 
-  const appClient: AppClient = await mongoBucket.initialize();
-  console.log(appClient);
-  expect(appClient).not.toBe(null);
+  const db: AppDatabase = await mongoBucket.initialize();
+  console.log(db);
+  expect(db).not.toBe(null);
 })
 
 test("Firestore/Mongo Bucket Initialization Test", async () => {
@@ -44,15 +44,15 @@ test("Firestore/Mongo Bucket Initialization Test", async () => {
 
   const password: string = testMongoDBAtlasPassword;
   const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
-  const mongoConfig: IMongoConfiguration = { uri: connectionURI };
+  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
   const bucket: Bucket = new Bucket(firebaseBucketConfig);
 
-  const firestoreAppClient: AppClient = await bucket.initialize();
-  expect(firestoreAppClient).not.toBe(null);
+  const firestoreDb: AppDatabase = await bucket.initialize();
+  expect(firestoreDb).not.toBe(null);
 
   bucket.config = mongoBucketConfig;
-  const mongoAppClient: AppClient = await bucket.initialize();
-  expect(mongoAppClient).not.toBe(null);
+  const mongoDb: AppDatabase = await bucket.initialize();
+  expect(mongoDb).not.toBe(null);
 })

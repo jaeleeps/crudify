@@ -1,5 +1,5 @@
 import { IMongoConfiguration } from './MongoConfiguration.interface';
-import { AppClient, DatabaseType, IDatabaseConfiguration } from '../type/database.enum';
+import { AppClient, AppDatabase, DatabaseType, IDatabaseConfiguration } from '../type/database.enum';
 import { MongoClient } from 'mongodb';
 import firebase from 'firebase';
 import App = firebase.app.App;
@@ -14,7 +14,7 @@ export abstract class BucketConfiguration {
   }
 
   protected abstract _initialize(): AppClient;
-  protected abstract async _connect(app: AppClient): AppClient;
+  protected abstract async _connect(app: AppClient): AppDatabase;
   public async initializae(): Promise<AppClient> {
     const appClient: AppClient = this._initialize();
     const connectedAppClient: AppClient = this._connect(appClient);

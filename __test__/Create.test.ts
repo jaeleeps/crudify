@@ -52,7 +52,7 @@ test("Mongo_C/R", async () => {
   const bucket: Bucket = new Bucket(mongoBucketConfig);
 
   const appClient: AppClient = await bucket.initialize();
-  const db: Db = (appClient as MongoClient).db("airbnb");
+  const db: Db = (appClient as Db).db("airbnb");
 
   const newUser: IUser = {
     id: '123',

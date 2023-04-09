@@ -1,5 +1,5 @@
 import { BucketConfiguration } from './BucketConfiguration';
-import { AppClient } from '../type/database.enum';
+import { AppClient, AppDatabase } from '../type/database.enum';
 
 export class Bucket {
   get id(): string {
@@ -22,8 +22,8 @@ export class Bucket {
     this._config = config;
   }
 
-  public async initialize(): Promise<AppClient> {
-    const appClient: AppClient = await this._config.initializae();
+  public async initialize(): Promise<AppDatabase> {
+    const appClient: AppDatabase = await this._config.initializae();
     return appClient;
   }
 

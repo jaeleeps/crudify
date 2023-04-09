@@ -1,7 +1,7 @@
 import { IMongoConfiguration } from './MongoConfiguration.interface';
 import { DatabaseType } from '../type/database.enum';
 import { BucketConfiguration } from './BucketConfiguration';
-import { MongoClient } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 
 export class MongoBucketConfiguration extends BucketConfiguration {
   constructor(config: IMongoConfiguration) {
@@ -13,8 +13,9 @@ export class MongoBucketConfiguration extends BucketConfiguration {
     return client;
   }
 
-  protected async _connect(client: MongoClient): MongoClient {
+  protected async _connect(client: MongoClient): Db {
     await client.connect();
-    return client
+    const db: Db = client.db((this.config as IMongoConfiguration).database);
+    return db
   }
 }
