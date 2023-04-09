@@ -37,6 +37,7 @@
     "@google-cloud/firestore": "^6.5.0",
     "csvtojson": "^2.0.10",
     "firebase": "^8.10.1",
+    "firebase-admin": "^11.6.0",
     "mongodb": "^5.1.0"
   },
   "type": "module"

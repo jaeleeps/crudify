@@ -28,6 +28,7 @@ test("Firebase Initialization Test", () => {
   const firebaseConfig = testFirebaseConfig;
 // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  console.log(firebase.apps);
   console.log(app);
   expect(app).not.toBe(null);
 })

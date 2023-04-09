@@ -12,8 +12,11 @@ export class FirestoreBucketConfiguration extends BucketConfiguration {
   }
 
   protected _initialize(): App {
-    const app: App = initializeApp(this.config);
-    return app;
+    if (!firebase.apps.length) {
+      return initializeApp(this.config) as App;
+    } else {
+      return firebase.apps[0] as App
+    }
   }
 
   protected _connect(app: App): App {
