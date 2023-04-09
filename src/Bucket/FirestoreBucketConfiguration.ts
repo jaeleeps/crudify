@@ -17,7 +17,7 @@ export class FirestoreBucketConfiguration extends BucketConfiguration {
     if (!firebase.apps.length) {
       return initializeApp(this.config) as App;
     } else {
-      return firebase.apps[0] as App
+      return firebase.apps[0] as App;
     }
   }
 
@@ -25,7 +25,6 @@ export class FirestoreBucketConfiguration extends BucketConfiguration {
     const db: firebase.firestore.Firestore = (app as App).firestore();
     return new Promise<Firestore>((resolve) => {
       resolve(db);
-    })
+    });
   }
-
 }

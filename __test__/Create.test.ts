@@ -77,3 +77,35 @@ test("Mongo_C/R", async () => {
   expect(user.name).toBe(newUser.name);
   expect(user.email).toBe(newUser.email);
 })
+
+test("Mongo_Collection_C/R", async () => {
+  const password: string = testMongoDBAtlasPassword;
+  const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
+  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
+  const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
+
+  const bucket: Bucket = new Bucket(mongoBucketConfig);
+
+  const db: AppDatabase = await bucket.initialize();
+
+  const newUser: IUser = {
+    id: '123',
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const usersCollection = db.collection<IUser>('users');
+  await usersCollection.insertOne(newUser);
+
+  // Read the user document from MongoDB
+  const user = await usersCollection.findOne({ id: newUser.id });
+
+  console.log(user);
+
+  console.log(user);
+  expect(user.id).toBe(newUser.id);
+  expect(user.name).toBe(newUser.name);
+  expect(user.email).toBe(newUser.email);
+})

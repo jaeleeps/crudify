@@ -20,5 +20,4 @@ export abstract class BucketConfiguration {
     const connectedAppClient: AppDatabase = await this._connect(appClient);
     return connectedAppClient;
   }
-
 }

@@ -16,6 +16,6 @@ export class MongoBucketConfiguration extends BucketConfiguration {
   protected async _connect(client: MongoClient): Promise<Db> {
     await client.connect();
     const db: Db = client.db((this.config as IMongoConfiguration).database);
-    return db
+    return db;
   }
 }
