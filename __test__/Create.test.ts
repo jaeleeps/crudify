@@ -3,19 +3,13 @@ import { testFirebaseConfig } from './env/tesFirebaseConfig';
 import { BucketConfiguration } from '../src/Bucket/BucketConfiguration';
 import { FirestoreBucketConfiguration } from '../src/Bucket/FirestoreBucketConfiguration';
 import { IFirestoreConfiguration } from '../src/Bucket/FirestoreConfiguration.interface';
-import { AppClient, AppDatabase } from '../src/type/database.enum';
-import { app, firestore } from 'firebase-admin';
+import { AppDatabase, MongoDbCollection } from '../src/type/database.enum';
 import { IUser } from './Test.interface';
-import App = app.App;
-import Firestore = firestore.Firestore;
-import firebase from 'firebase';
-import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 import { testMongoDBAtlasPassword } from './env/testMongoDBAtlasConfig';
 import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface';
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
-import { Db, MongoClient } from 'mongodb';
 import { CollectionReference } from '@google-cloud/firestore';
-import DocumentData = firestore.DocumentData;
+import { Collection } from '../src/Collection/Collection';
 
 test("Firebase_C/R", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
@@ -32,12 +26,12 @@ test("Firebase_C/R", async () => {
     updatedAt: new Date(),
   };
 
-  const newUserRef = await (db.collection('users') as CollectionReference<DocumentData>)
-    .doc(newUser.id)
-    .set(newUser);
+  const collection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
+
+  const newUserRef = await collection.doc(newUser.id).set(newUser);
 
   // Read the user document from Firestore
-  const userRef: DocumentSnapshot<IUser> = await db.collection('users').doc(newUser.id).get();
+  const userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await collection.doc(newUser.id).get();
   const user: IUser = userRef.data() as IUser;
 
   console.log(user);
@@ -64,13 +58,43 @@ test("Mongo_C/R", async () => {
     updatedAt: new Date(),
   };
 
-  const usersCollection = db.collection<IUser>('users');
+  const usersCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
   await usersCollection.insertOne(newUser);
 
   // Read the user document from MongoDB
   const user = await usersCollection.findOne({ id: newUser.id });
 
   console.log(user);
+  expect(user.id).toBe(newUser.id);
+  expect(user.name).toBe(newUser.name);
+  expect(user.email).toBe(newUser.email);
+})
+
+test("Firebase_Collection_C/R", async () => {
+  const config: IFirestoreConfiguration = testFirebaseConfig;
+  const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+
+  const db: AppDatabase = await bucket.initialize();
+
+  const newUser: IUser = {
+    id: '1234',
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const firestoreCollection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
+  const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+  // const newUserRef: WriteResult = await firestoreCollection.doc(newUser.id).set(newUser);
+  const result = collection.insertOne<IUser>(newUser.id, newUser);
+  console.log(result);
+
+  // Read the user document from Firestore
+  const userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUser.id).get();
+  const user: IUser = userRef.data() as IUser;
 
   console.log(user);
   expect(user.id).toBe(newUser.id);
@@ -89,20 +113,22 @@ test("Mongo_Collection_C/R", async () => {
   const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
-    id: '123',
+    id: '1234',
     name: 'John Doe',
     email: 'johndoe@example.com',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  const usersCollection = db.collection<IUser>('users');
-  await usersCollection.insertOne(newUser);
+  const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
+  const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+  // await mongoCollection.insertOne(newUser);
+  const result = await collection.insertOne<IUser>(newUser.id, newUser);
+  console.log(result);
 
   // Read the user document from MongoDB
-  const user = await usersCollection.findOne({ id: newUser.id });
-
-  console.log(user);
+  const user = await mongoCollection.findOne({ id: newUser.id });
 
   console.log(user);
   expect(user.id).toBe(newUser.id);

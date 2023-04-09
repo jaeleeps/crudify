@@ -1,10 +1,11 @@
 import { IMongoConfiguration } from '../Bucket/MongoConfiguration.interface';
 import { IFirestoreConfiguration } from '../Bucket/FirestoreConfiguration.interface';
-import { Db, MongoClient } from 'mongodb';
+import { Collection, Db, MongoClient } from 'mongodb';
 import firebase from 'firebase';
 import App = firebase.app.App;
 import { firestore } from 'firebase-admin';
 import Firestore = firestore.Firestore;
+import { CollectionReference } from '@google-cloud/firestore';
 
 export enum DatabaseType {
   Mongo = 'MONGO',
@@ -16,3 +17,7 @@ export type IDatabaseConfiguration = IMongoConfiguration | IFirestoreConfigurati
 export type AppClient = MongoClient | App;
 
 export type AppDatabase = Db | Firestore;
+
+export type AppCollection<T> = Collection<T> | CollectionReference<T>;
+
+export type MongoDbCollection<T> = Collection<T>;
