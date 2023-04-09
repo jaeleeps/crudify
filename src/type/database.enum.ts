@@ -3,6 +3,8 @@ import { IFirestoreConfiguration } from '../Bucket/FirestoreConfiguration.interf
 import { Db, MongoClient } from 'mongodb';
 import firebase from 'firebase';
 import App = firebase.app.App;
+import { firestore } from 'firebase-admin';
+import Firestore = firestore.Firestore;
 
 export enum DatabaseType {
   Mongo = 'MONGO',
@@ -13,4 +15,4 @@ export type IDatabaseConfiguration = IMongoConfiguration | IFirestoreConfigurati
 
 export type AppClient = MongoClient | App;
 
-export type AppDatabase = Db | App;
+export type AppDatabase = Db | Firestore;

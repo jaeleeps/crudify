@@ -3,7 +3,7 @@ import { testFirebaseConfig } from './env/tesFirebaseConfig';
 import { BucketConfiguration } from '../src/Bucket/BucketConfiguration';
 import { FirestoreBucketConfiguration } from '../src/Bucket/FirestoreBucketConfiguration';
 import { IFirestoreConfiguration } from '../src/Bucket/FirestoreConfiguration.interface';
-import { AppClient } from '../src/type/database.enum';
+import { AppClient, AppDatabase } from '../src/type/database.enum';
 import { app, firestore } from 'firebase-admin';
 import { IUser } from './Test.interface';
 import App = app.App;
@@ -14,14 +14,15 @@ import { testMongoDBAtlasPassword } from './env/testMongoDBAtlasConfig';
 import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface';
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
 import { Db, MongoClient } from 'mongodb';
+import { CollectionReference } from '@google-cloud/firestore';
+import DocumentData = firestore.DocumentData;
 
 test("Firebase_C/R", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
   const bucket: Bucket = new Bucket(firebaseBucketConfig);
 
-  const appClient: AppClient = await bucket.initialize();
-  const db: Firestore = (appClient as App).firestore();
+  const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
     id: '123',
@@ -31,7 +32,9 @@ test("Firebase_C/R", async () => {
     updatedAt: new Date(),
   };
 
-  const newUserRef = await db.collection('users').doc(newUser.id).set(newUser);
+  const newUserRef = await (db.collection('users') as CollectionReference<DocumentData>)
+    .doc(newUser.id)
+    .set(newUser);
 
   // Read the user document from Firestore
   const userRef: DocumentSnapshot<IUser> = await db.collection('users').doc(newUser.id).get();
@@ -46,13 +49,12 @@ test("Firebase_C/R", async () => {
 test("Mongo_C/R", async () => {
   const password: string = testMongoDBAtlasPassword;
   const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
-  const mongoConfig: IMongoConfiguration = { uri: connectionURI };
+  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
   const bucket: Bucket = new Bucket(mongoBucketConfig);
 
-  const appClient: AppClient = await bucket.initialize();
-  const db: Db = (appClient as Db).db("airbnb");
+  const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
     id: '123',

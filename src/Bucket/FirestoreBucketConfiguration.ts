@@ -1,10 +1,12 @@
 import { IFirestoreConfiguration } from './FirestoreConfiguration.interface';
-import { DatabaseType } from '../type/database.enum';
+import { AppClient, DatabaseType } from '../type/database.enum';
 import { BucketConfiguration } from './BucketConfiguration';
 import { IMongoConfiguration } from './MongoConfiguration.interface';
 import firebase from 'firebase';
 import initializeApp = firebase.initializeApp;
 import App = firebase.app.App;
+import { firestore } from 'firebase-admin';
+import Firestore = firestore.Firestore;
 
 export class FirestoreBucketConfiguration extends BucketConfiguration {
   constructor(config: IFirestoreConfiguration) {
@@ -19,8 +21,11 @@ export class FirestoreBucketConfiguration extends BucketConfiguration {
     }
   }
 
-  protected _connect(app: App): App {
-    return app
+  protected async _connect(app: AppClient): Promise<Firestore> {
+    const db: firebase.firestore.Firestore = (app as App).firestore();
+    return new Promise<Firestore>((resolve) => {
+      resolve(db);
+    })
   }
 
 }

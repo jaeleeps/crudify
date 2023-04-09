@@ -13,7 +13,7 @@ export class MongoBucketConfiguration extends BucketConfiguration {
     return client;
   }
 
-  protected async _connect(client: MongoClient): Db {
+  protected async _connect(client: MongoClient): Promise<Db> {
     await client.connect();
     const db: Db = client.db((this.config as IMongoConfiguration).database);
     return db

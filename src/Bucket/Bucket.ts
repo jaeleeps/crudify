@@ -24,6 +24,7 @@ export class Bucket {
 
   public async initialize(): Promise<AppDatabase> {
     const appClient: AppDatabase = await this._config.initializae();
+    console.log("Bucket Initialized.");
     return appClient;
   }
 
