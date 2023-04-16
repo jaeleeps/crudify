@@ -1,7 +1,7 @@
 
 import { CrudifyClient } from '../src/CrudifyClient';
 import { Bucket } from '../src/Bucket/Bucket';
-import { testFirebaseConfig } from './env/tesFirebaseConfig';
+import { testFirebaseConfig } from './env/testFirebaseConfig';
 import firebase from 'firebase';
 import initializeApp = firebase.initializeApp;
 import { MongoClient } from 'mongodb';

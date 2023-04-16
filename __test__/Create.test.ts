@@ -1,5 +1,5 @@
 import { Bucket } from '../src/Bucket/Bucket';
-import { testFirebaseConfig } from './env/tesFirebaseConfig';
+import { testFirebaseConfig } from './env/testFirebaseConfig';
 import { BucketConfiguration } from '../src/Bucket/BucketConfiguration';
 import { FirestoreBucketConfiguration } from '../src/Bucket/FirestoreBucketConfiguration';
 import { IFirestoreConfiguration } from '../src/Bucket/FirestoreConfiguration.interface';
