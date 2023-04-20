@@ -4,6 +4,8 @@
   "description": "all in one NPM module for CRUD operations",
   "main": "index.ts",
   "scripts": {
+    "FirebaseListingJob": "node src/Jobs/FirebaseListingJob.js",
+    "MongoListingJob": "node src/Jobs/MongoListingJob.js",
     "test": "jest --config jestconfig.json",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.21.0",
+    "@types/async": "^3.2.18",
     "@types/jest": "^29.5.0",
     "jest": "^29.5.0",
     "prettier": "^2.8.6",
@@ -35,10 +38,12 @@
   ],
   "dependencies": {
     "@google-cloud/firestore": "^6.5.0",
+    "async": "^3.2.4",
+    "csv-parser": "^3.0.0",
     "csvtojson": "^2.0.10",
     "firebase": "^8.10.1",
-    "firebase-admin": "^11.6.0",
+    "firebase-admin": "^11.7.0",
+    "fs": "^0.0.1-security",
     "mongodb": "^5.1.0"
-  },
-  "type": "module"
+  }
 }

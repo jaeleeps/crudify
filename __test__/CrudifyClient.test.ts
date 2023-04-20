@@ -6,6 +6,7 @@ import firebase from 'firebase';
 import initializeApp = firebase.initializeApp;
 import { MongoClient } from 'mongodb';
 import { testMongoDBAtlasPassword } from './env/testMongoDBAtlasConfig';
+
 test("Singleton Test", () => {
   const instance_a = CrudifyClient.getInstance();
   const instance_b = CrudifyClient.getInstance();
