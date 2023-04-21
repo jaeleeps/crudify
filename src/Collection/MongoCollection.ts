@@ -34,7 +34,6 @@ export class MongoCollection<T> extends Collection<T>{
 
   public async updateAllById<T> (updates: [string | number, T][]): Promise<UpdateResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
-
     const updatePromises = updates.map(async ([id, document]) => {
       const result: UpdateResult = await colRef.updateOne(
           { _id: id },

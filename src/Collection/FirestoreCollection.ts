@@ -20,4 +20,24 @@ export class FirestoreCollection<T> extends Collection<T>{
   public async findOneById<T>(id: string | number) {
 
   }
+
+  public async updateOneById<T> (_id: string | number, document: T):Promise<FirebaseFirestore.WriteResult> {
+    const id: string = typeof _id === 'string' ? _id : _id.toString();
+    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const result: FirebaseFirestore.WriteResult = await colRef.doc(id).update(document);
+    return result;
+  }
+
+  public async updateAllById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
+    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const updatePromises = updates.map(([id, document]) => {
+      const docId: string = typeof id === 'string' ? id : id.toString();
+      return colRef.doc(docId).update(document);
+    });
+
+    const updateResults = await Promise.all(updatePromises);
+    return updateResults;
+  }
+
+
 }
