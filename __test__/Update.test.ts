@@ -10,68 +10,8 @@ import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface'
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
 import { CollectionReference } from '@google-cloud/firestore';
 import { Collection } from '../src/Collection/Collection';
-import * as dns from "dns";
 import {ObjectId} from "mongodb";
-import * as string_decoder from "string_decoder";
 
-test("Firebase_C/R", async () => {
-  const config: IFirestoreConfiguration = testFirebaseConfig;
-  const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
-
-  const db: AppDatabase = await bucket.initialize();
-
-  const newUser: IUser = {
-    id: '123',
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  const collection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
-
-  const newUserRef = await collection.doc(newUser.id).set(newUser);
-
-  // Read the user document from Firestore
-  const userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await collection.doc(newUser.id).get();
-  const user: IUser = userRef.data() as IUser;
-
-  console.log(user);
-  expect(user.id).toBe(newUser.id);
-  expect(user.name).toBe(newUser.name);
-  expect(user.email).toBe(newUser.email);
-})
-
-test("Mongo_C/R", async () => {
-  const password: string = testMongoDBAtlasPassword;
-  const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
-  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
-  const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
-
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
-
-  const db: AppDatabase = await bucket.initialize();
-
-  const newUser: IUser = {
-    id: '123',
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  const usersCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
-  await usersCollection.insertOne(newUser);
-
-  // Read the user document from MongoDB
-  const user = await usersCollection.findOne({ id: newUser.id });
-
-  console.log(user);
-  expect(user.id).toBe(newUser.id);
-  expect(user.name).toBe(newUser.name);
-  expect(user.email).toBe(newUser.email);
-})
 
 test("Firebase_Collection_UpdateOne", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
@@ -91,7 +31,6 @@ test("Firebase_Collection_UpdateOne", async () => {
   const firestoreCollection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-  // const newUserRef: WriteResult = await firestoreCollection.doc(newUser.id).set(newUser);
   const result = collection.insertOne<IUser>(newUser.id, newUser);
   console.log(result);
 
@@ -110,7 +49,7 @@ test("Firebase_Collection_UpdateOne", async () => {
     updatedAt: new Date(),
   };
   const updatedResult = collection.updateOneById(newUser.id, updatedUser);
-  // Read the user document from Firestore
+
   userRef = await firestoreCollection.doc(newUser.id).get();
   const user: IUser = userRef.data() as IUser;
 
@@ -162,7 +101,6 @@ test("Firebase_Collection_UpdateMany", async () => {
     expect(userData.name).toBe(updatedNames[i]);
   }
 
-
 })
 
 test("Mongo_Collection_UpdateOne", async () => {
@@ -186,12 +124,10 @@ test("Mongo_Collection_UpdateOne", async () => {
   const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-  // await mongoCollection.insertOne(newUser);
   const result = await collection.insertOne<IUser>(newUser.id, newUser);
   const userID = result.insertedId;
   console.log(result);
 
-  // Read the user document from MongoDB
   const user = await mongoCollection.findOne({ _id: userID });
 
   const updatedUser: IUser = {
@@ -245,17 +181,19 @@ test("Mongo_Collection_UpdateMany", async () => {
   const results = await mongoCollection.insertMany(newUsers);
 
 
-  // Read the user document from MongoDB
   const originalUsers = await mongoCollection.find({}).limit(5).toArray();
   const userIDs : ObjectId[] = [];
   const oguserNames : string[] = [];
   const updatingUsers  = [];
+
+
   for (let i = 0; i < count; i++) {
     userIDs.push(originalUsers[i]._id);
     oguserNames.push(originalUsers[i].name);
     originalUsers[i].name = originalUsers[i].name + " Updated" + i;
     updatingUsers.push([originalUsers[i]._id, originalUsers[i]]);
   }
+
   console.log(userIDs);
   const updateResult = await collection.updateAllById(updatingUsers);
   console.log(updateResult);
