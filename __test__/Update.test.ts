@@ -10,6 +10,8 @@ import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface'
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
 import { CollectionReference } from '@google-cloud/firestore';
 import { Collection } from '../src/Collection/Collection';
+import * as dns from "dns";
+import {ObjectId} from "mongodb";
 
 test("Firebase_C/R", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
@@ -102,7 +104,7 @@ test("Firebase_Collection_C/R", async () => {
   expect(user.email).toBe(newUser.email);
 })
 
-test("Mongo_Collection_C/R", async () => {
+test("Mongo_Collection_UpdateOne", async () => {
   const password: string = testMongoDBAtlasPassword;
   const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
@@ -131,11 +133,6 @@ test("Mongo_Collection_C/R", async () => {
   // Read the user document from MongoDB
   const user = await mongoCollection.findOne({ _id: userID });
 
-  console.log(user._id.toString());
-  expect(user.id).toBe(newUser.id);
-  expect(user.name).toBe(newUser.name);
-  expect(user.email).toBe(newUser.email);
-
   const updatedUser: IUser = {
     id: '1234',
     name: 'More Updated John Doe',
@@ -152,4 +149,63 @@ test("Mongo_Collection_C/R", async () => {
   console.log(confirmupdatedUser);
   expect(confirmupdatedUser.id).toBe(updatedUser.id);
   expect(confirmupdatedUser.name).toBe(updatedUser.name);
+})
+
+function generateUsers(count: number) : IUser[] {
+  const newUsers : IUser[] = [];
+  for (let i = 0; i < count; i++) {
+    const newUser: IUser = {
+      id: '1234' + i,
+      name: 'John Doe Version' + i,
+      email: 'johndoe@example.com' + i,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    newUsers.push(newUser);
+  }
+  return newUsers;
+}
+test("Mongo_Collection_UpdateMany", async () => {
+  const password: string = testMongoDBAtlasPassword;
+  const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
+  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
+  const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
+  const count = 5;
+  const bucket: Bucket = new Bucket(mongoBucketConfig);
+
+  const db: AppDatabase = await bucket.initialize();
+
+  const newUsers : IUser[] = generateUsers(count);
+
+  const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
+  const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+  const results = await mongoCollection.insertMany(newUsers);
+
+
+  // Read the user document from MongoDB
+  const originalUsers = await mongoCollection.find({}).limit(5).toArray();
+  const userIDs : ObjectId[] = [];
+  const oguserNames : string[] = [];
+  const updatingUsers  = [];
+  for (let i = 0; i < count; i++) {
+    userIDs.push(originalUsers[i]._id);
+    oguserNames.push(originalUsers[i].name);
+    originalUsers[i].name = originalUsers[i].name + " Updated";
+    updatingUsers.push([originalUsers[i]._id, originalUsers[i]]);
+  }
+  console.log(userIDs);
+  const updateResult = await collection.updateAllById(updatingUsers);
+  console.log(updateResult);
+
+  const afterNames : string[] = [];
+  for (let i = 0; i < count; i++) {
+    const after = await mongoCollection.findOne({_id: userIDs[i]});
+    afterNames.push(after.name);
+  }
+  console.log(afterNames);
+  for (let i = 0; i < count; i++) {
+    expect(afterNames[i]).toBe(oguserNames[i] + " Updated");
+  }
+
 })

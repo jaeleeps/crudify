@@ -37,7 +37,7 @@ export class MongoCollection<T> extends Collection<T>{
 
     const updatePromises = updates.map(async ([id, document]) => {
       const result: UpdateResult = await colRef.updateOne(
-          { id: id },
+          { _id: id },
           { $set: document }
       );
       return result;
@@ -46,5 +46,6 @@ export class MongoCollection<T> extends Collection<T>{
     const updateResults = await Promise.all(updatePromises);
     return updateResults;
   }
+
   // Delete
 }
