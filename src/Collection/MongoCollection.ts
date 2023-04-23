@@ -4,8 +4,7 @@ import { Db, InsertOneResult, UpdateResult } from 'mongodb';
 import { CollectionReference } from '@google-cloud/firestore';
 import { MongoDbCollection } from '../type/database.enum';
 
-export class MongoCollection<T> extends Collection<T>{
-
+export class MongoCollection<T> extends Collection<T> {
   constructor(config: BucketConfiguration, db: Db, name: string) {
     super(config, db, name);
     this.ref = db.collection<T>(name);
@@ -19,26 +18,18 @@ export class MongoCollection<T> extends Collection<T>{
     return result;
   }
   // Read
-  public async findOneById<T>(id: string | number) {
-
-  }
+  public async findOneById<T>(id: string | number) {}
   // Update
-  public async updateOneById<T> (id: string | number, document: T) : Promise<UpdateResult> {
+  public async updateOneById<T>(id: string | number, document: T): Promise<UpdateResult> {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
-    const result: UpdateResult = await colRef.updateOne(
-        { _id: id },
-        { $set: document }
-    );
+    const result: UpdateResult = await colRef.updateOne({ _id: id }, { $set: document });
     return result;
   }
 
-  public async updateAllById<T> (updates: [string | number, T][]): Promise<UpdateResult[]> {
+  public async updateAllById<T>(updates: [string | number, T][]): Promise<UpdateResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
     const updatePromises = updates.map(async ([id, document]) => {
-      const result: UpdateResult = await colRef.updateOne(
-          { _id: id },
-          { $set: document }
-      );
+      const result: UpdateResult = await colRef.updateOne({ _id: id }, { $set: document });
       return result;
     });
 

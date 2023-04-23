@@ -21,9 +21,8 @@ export abstract class Collection<T> {
   // Read
   public abstract async findOneById<T>(id: string | number);
   // Update
-  public abstract async updateOneById<T> (id: string | number, document: T);
-  public abstract async updateAllById<T> (updates: [string | number, T][]);
+  public abstract async updateOneById<T>(id: string | number, document: T);
+  public abstract async updateAllById<T>(updates: [string | number, T][]);
 
   // Delete
-
 }
