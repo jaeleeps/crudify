@@ -78,7 +78,7 @@ test("Firebase_Collection_C/R", async () => {
   const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
-    id: '1234',
+    id: '903313404_00_01',
     name: 'John Doe',
     email: 'johndoe@example.com',
     createdAt: new Date(),
@@ -89,7 +89,7 @@ test("Firebase_Collection_C/R", async () => {
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
   // const newUserRef: WriteResult = await firestoreCollection.doc(newUser.id).set(newUser);
-  const result = collection.insertOne<IUser>(newUser.id, newUser);
+  const result = collection.createOne<IUser>(newUser.id, newUser);
   console.log(result);
 
   // Read the user document from Firestore
@@ -113,7 +113,7 @@ test("Mongo_Collection_C/R", async () => {
   const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
-    id: '1234',
+    id: '903313404_00_02',
     name: 'John Doe',
     email: 'johndoe@example.com',
     createdAt: new Date(),
@@ -124,7 +124,7 @@ test("Mongo_Collection_C/R", async () => {
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
   // await mongoCollection.insertOne(newUser);
-  const result = await collection.insertOne<IUser>(newUser.id, newUser);
+  const result = await collection.createOne<IUser>(newUser.id, newUser);
   console.log(result);
 
   // Read the user document from MongoDB
@@ -134,4 +134,119 @@ test("Mongo_Collection_C/R", async () => {
   expect(user.id).toBe(newUser.id);
   expect(user.name).toBe(newUser.name);
   expect(user.email).toBe(newUser.email);
+})
+
+
+test("Firebase_Collection_C/R/Many", async () => {
+  const config: IFirestoreConfiguration = testFirebaseConfig;
+  const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+
+  const db: AppDatabase = await bucket.initialize();
+  const dateString: string = Date.now().toString();
+
+  const newUsers: IUser[] = [
+    {
+      id: '903313404_00_03_' + dateString + '_01',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '903313404_00_03_' + dateString + '_02',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '903313404_00_03_' + dateString + '_03',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+  ];
+
+  const creates: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
+
+  const firestoreCollection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
+  const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+  const result = collection.createMany<IUser>(creates);
+  console.log(result);
+
+  // Read the user document from Firestore
+  const userRef1: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUsers[0].id).get();
+  const user1: IUser = userRef1.data() as IUser;
+  const userRef2: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUsers[1].id).get();
+  const user2: IUser = userRef2.data() as IUser;
+  const userRef3: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUsers[2].id).get();
+  const user3: IUser = userRef3.data() as IUser;
+
+  console.log(user1);
+  expect(user1.id).toBe(newUsers[0].id);
+  console.log(user2);
+  expect(user2.id).toBe(newUsers[1].id);
+  console.log(user3);
+  expect(user3.id).toBe(newUsers[2].id);
+})
+
+test("Mongo_Collection_C/R/Many", async () => {
+  const password: string = testMongoDBAtlasPassword;
+  const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
+  const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
+  const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
+
+  const bucket: Bucket = new Bucket(mongoBucketConfig);
+
+  const db: AppDatabase = await bucket.initialize();
+
+  const dateString: string = Date.now().toString();
+
+  const newUsers: IUser[] = [
+    {
+      id: '903313404_00_03_' + dateString + '_01',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '903313404_00_03_' + dateString + '_02',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '903313404_00_03_' + dateString + '_03',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+  ];
+
+  const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
+  const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+  const creates: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
+
+  // await mongoCollection.insertOne(newUser);
+  const result = await collection.createMany<IUser>(creates);
+  console.log(result);
+
+  // Read the user document from MongoDB
+  const user1 = await mongoCollection.findOne({ id: newUsers[0].id });
+  const user2 = await mongoCollection.findOne({ id: newUsers[1].id });
+  const user3 = await mongoCollection.findOne({ id: newUsers[2].id });
+
+  console.log(user1);
+  expect(user1.id).toBe(newUsers[0].id);
+  console.log(user2);
+  expect(user2.id).toBe(newUsers[1].id);
+  console.log(user3);
+  expect(user3.id).toBe(newUsers[2].id);
 })

@@ -17,13 +17,13 @@ export abstract class Collection<T> {
 
   // CRUD
   // Create
-  public abstract async insertOne<T>(_id: string | number, document: T);
+  public abstract async createOne<T>(_id: string | number, document: T);
+  public abstract async createMany<T>(creates: [string | number, T][]);
   // Read
   public abstract async findOneById<T>(id: string | number);
   // Update
-  public abstract async updateOneById<T> (id: string | number, document: T);
-  public abstract async updateAllById<T> (updates: [string | number, T][]);
+  public abstract async updateOneById<T>(id: string | number, document: T);
+  public abstract async updateAllById<T>(updates: [string | number, T][]);
 
   // Delete
-
 }

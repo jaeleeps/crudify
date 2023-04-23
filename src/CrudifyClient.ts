@@ -9,7 +9,7 @@ export class CrudifyClient {
   private constructor() {
     this.bucketMap[''] = this.defaultBucket;
   }
-  s;
+
   public static getInstance(): CrudifyClient {
     if (!CrudifyClient.instance) {
       CrudifyClient.instance = new CrudifyClient();
