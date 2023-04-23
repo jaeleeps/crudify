@@ -78,7 +78,7 @@ test("Firebase_Collection_C/R", async () => {
   const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
-    id: '1234',
+    id: '903313404_00_01',
     name: 'John Doe',
     email: 'johndoe@example.com',
     createdAt: new Date(),
@@ -113,7 +113,7 @@ test("Mongo_Collection_C/R", async () => {
   const db: AppDatabase = await bucket.initialize();
 
   const newUser: IUser = {
-    id: '1234',
+    id: '903313404_00_02',
     name: 'John Doe',
     email: 'johndoe@example.com',
     createdAt: new Date(),
