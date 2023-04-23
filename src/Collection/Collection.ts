@@ -18,7 +18,7 @@ export abstract class Collection<T> {
   // CRUD
   // Create
   public abstract async createOne<T>(_id: string | number, document: T);
-  public abstract async createMany<T>(documents: T[]);
+  public abstract async createMany<T>(creates: [string | number, T][]);
   // Read
   public abstract async findOneById<T>(id: string | number);
   // Update

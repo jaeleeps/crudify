@@ -19,11 +19,11 @@ export class FirestoreCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async createMany<T>(documents: T[]) {
+  public async createMany<T>(creates: [string | number, T][]) {
     const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
     const batch: FirebaseFirestore.WriteBatch = (this.db as Firestore).batch();
 
-    const createPromises = documents.map(([id, document]) => {
+    const createPromises = creates.map(([id, document]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       const docRef: DocumentReference<T> = colRef.doc(id);
       batch.set(docRef, document);

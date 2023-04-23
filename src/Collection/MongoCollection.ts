@@ -18,9 +18,10 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async createMany<T>(documents: T[]) {
+  public async createMany<T>(creates: [string | number, T][]) {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
-    const result = await colRef.insertMany(documents);
+    const newDocuments: T[] = creates.map(([id, doc]) => doc);
+    const result = await colRef.insertMany(newDocuments);
     return result;
   }
   // Read
