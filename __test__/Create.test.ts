@@ -89,7 +89,7 @@ test("Firebase_Collection_C/R", async () => {
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
   // const newUserRef: WriteResult = await firestoreCollection.doc(newUser.id).set(newUser);
-  const result = collection.insertOne<IUser>(newUser.id, newUser);
+  const result = collection.createOne<IUser>(newUser.id, newUser);
   console.log(result);
 
   // Read the user document from Firestore
@@ -124,7 +124,7 @@ test("Mongo_Collection_C/R", async () => {
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
   // await mongoCollection.insertOne(newUser);
-  const result = await collection.insertOne<IUser>(newUser.id, newUser);
+  const result = await collection.createOne<IUser>(newUser.id, newUser);
   console.log(result);
 
   // Read the user document from MongoDB

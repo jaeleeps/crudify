@@ -11,7 +11,7 @@ export class MongoCollection<T> extends Collection<T> {
   }
   // CRUD
   // Create
-  public async insertOne<T>(_id: string | number, document: T): any {
+  public async createOne<T>(_id: string | number, document: T): any {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
     const result: InsertOneResult<T> = await colRef.insertOne(document);

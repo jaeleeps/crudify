@@ -31,7 +31,7 @@ test("Firebase_Collection_UpdateOne", async () => {
   const firestoreCollection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-  const result = collection.insertOne<IUser>(newUser.id, newUser);
+  const result = collection.createOne<IUser>(newUser.id, newUser);
   console.log(result);
 
   let userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUser.id).get();
@@ -124,7 +124,7 @@ test("Mongo_Collection_UpdateOne", async () => {
   const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-  const result = await collection.insertOne<IUser>(newUser.id, newUser);
+  const result = await collection.createOne<IUser>(newUser.id, newUser);
   const userID = result.insertedId;
   console.log(result);
 
