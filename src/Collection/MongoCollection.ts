@@ -17,6 +17,12 @@ export class MongoCollection<T> extends Collection<T> {
     const result: InsertOneResult<T> = await colRef.insertOne(document);
     return result;
   }
+
+  public async createMany<T>(documents: T[]) {
+    const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
+    const result = await colRef.insertMany(documents);
+    return result;
+  }
   // Read
   public async findOneById<T>(id: string | number) {}
   // Update
