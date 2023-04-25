@@ -1,11 +1,11 @@
 {
-  "name": "crudify",
-  "version": "1.0.0",
+  "name": "crudbox",
+  "version": "1.0.1",
   "description": "all in one NPM module for CRUD operations",
   "main": "index.ts",
   "scripts": {
-    "FirebaseListingJob": "node src/Jobs/FirebaseListingJob.js",
-    "MongoListingJob": "node src/Jobs/MongoListingJob.js",
+    "FirebaseListingJob": "node ../demo_data/Jobs/FirebaseListingJob.js",
+    "MongoListingJob": "node ../demo_data/Jobs/MongoListingJob.js",
     "test": "jest --config jestconfig.json",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",

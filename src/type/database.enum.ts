@@ -6,6 +6,7 @@ import App = firebase.app.App;
 import { firestore } from 'firebase-admin';
 import Firestore = firestore.Firestore;
 import { CollectionReference } from '@google-cloud/firestore';
+import { Document } from 'bson';
 
 export enum DatabaseType {
   Mongo = 'MONGO',
@@ -16,7 +17,7 @@ export type IDatabaseConfiguration = IMongoConfiguration | IFirestoreConfigurati
 
 export type AppClient = MongoClient | App;
 
-export type AppDatabase = Db | Firestore;
+export type AppDatabase = Db | any;
 
 export type AppCollection<T> = Collection<T> | CollectionReference<T>;
 
