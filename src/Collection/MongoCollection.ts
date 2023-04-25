@@ -1,6 +1,6 @@
 import { BucketConfiguration } from '../Bucket/BucketConfiguration';
 import { Collection } from './Collection';
-import { Db, InsertOneResult, UpdateResult } from 'mongodb';
+import {Db, FindCursor, InsertOneResult, UpdateResult, WithId} from 'mongodb';
 import { CollectionReference } from '@google-cloud/firestore';
 import { MongoDbCollection } from '../type/database.enum';
 
@@ -25,7 +25,22 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
   // Read
-  public async findOneById<T>(id: string | number) {}
+  public async findOneById<T>(_id: string | number, document: T): Promise<FindCursor<WithId<T>>> {
+    const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
+    const result: Promise<FindCursor<WithId<T>>> = await colRef.find({ _id: _id });
+    return result;
+  }
+
+  public async findManyById<T>(finds: [string | number, T][]): Promise<FindCursor<WithId<T>>[]> {
+    const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
+    let ret = [];
+    finds.forEach(async id => {
+      const result: FindCursor<WithId<T>> = await colRef.find({_id: id});
+      ret.push(result);
+    });
+    return ret;
+  }
+
   // Update
   public async updateOneById<T>(id: string | number, document: T): Promise<UpdateResult> {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
