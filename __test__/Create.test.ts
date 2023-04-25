@@ -14,7 +14,7 @@ import { Collection } from '../src/Collection/Collection';
 test("Firebase_C/R", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -46,7 +46,7 @@ test("Mongo_C/R", async () => {
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
+  const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -73,7 +73,7 @@ test("Mongo_C/R", async () => {
 test("Firebase_Collection_C/R", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -108,7 +108,7 @@ test("Mongo_Collection_C/R", async () => {
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
+  const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -140,7 +140,7 @@ test("Mongo_Collection_C/R", async () => {
 test("Firebase_Collection_C/R/Many", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
   const dateString: string = Date.now().toString();
@@ -199,7 +199,7 @@ test("Mongo_Collection_C/R/Many", async () => {
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
+  const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 

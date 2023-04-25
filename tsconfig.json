@@ -9,8 +9,10 @@
     "strict": true,
     "lib": [
       "dom",
-      "scripthost"
-    ],
+      "scripthost",
+      "es2015.promise",
+      "es2015.iterable"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules"]

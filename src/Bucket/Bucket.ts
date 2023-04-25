@@ -36,7 +36,8 @@ export class Bucket {
 
   private _collectionsMap: { [key: string]: Collection<any> };
   private _db: AppDatabase;
-  public constructor(config: BucketConfiguration) {
+  public constructor(config: BucketConfiguration, id: string) {
+    this._id = id;
     this._type = config.type;
     this._config = config;
     this._collectionsMap = {};
