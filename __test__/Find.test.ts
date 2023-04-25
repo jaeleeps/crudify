@@ -32,15 +32,16 @@ test("Firebase_Find_One", async() => {
     const result = collection.createOne<IUser>(newUser.id, newUser);
     console.log(result);
 
-    let userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUser.id).get();
+    const userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUser.id).get();
     const ogUser: IUser = userRef.data() as IUser;
     console.log(ogUser);
     expect(ogUser.id).toBe(newUser.id);
     expect(ogUser.name).toBe(newUser.name);
     expect(ogUser.email).toBe(newUser.email);
 
-    const findResult = collection.findOneById(ogUser.id);
-    const foundUser: IUser = userRef.data() as IUser;
+    const findResult = await collection.findOneById(ogUser.id);
+    console.log(findResult);
+    const foundUser: IUser = findResult as IUser;
 
 
     expect(foundUser.id).toBe(ogUser.id);

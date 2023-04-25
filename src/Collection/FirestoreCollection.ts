@@ -34,11 +34,12 @@ export class FirestoreCollection<T> extends Collection<T> {
   }
 
   // Read
-  public async findOneById<T>(_id: string | number): Promise<FirebaseFirestore.Query> {
-    const id: string = typeof _id === 'string' ? id: _id.toString();
+  public async findOneById<T>(_id: string | number) {
+    const id: string = typeof _id === 'string' ? _id: _id.toString();
     const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
-    const result: FirebaseFirestore.Query = await colRef.doc(id).get();
-    return result;
+    const result = await colRef.doc(id).get();
+    const ret = result.data();
+    return ret;
   }
 
   public async findManyById<T>(finds: [string | number, T][]): Promise<FirebaseFirestore.Query[]> {
