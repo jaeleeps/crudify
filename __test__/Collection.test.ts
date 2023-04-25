@@ -9,7 +9,7 @@ import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration
 import { AppDatabase } from '../src/type/database.enum';
 import { IUser } from './Test.interface';
 import { Collection } from '../src/Collection/Collection';
-import {testRun} from "../src/Jobs/MongoListingJob";
+import {testRun} from "../../demo_data/Jobs/MongoListingJob";
 
 test("Firebase_Collection_Initialization", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
