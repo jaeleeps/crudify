@@ -1,0 +1,4 @@
+.idea
+/__test__
+node_modules
+lib
