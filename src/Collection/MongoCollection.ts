@@ -33,14 +33,24 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async findManyById<T>(finds: [string | number, T][]): Promise<FindCursor<WithId<T>>[]> {
+  public async findManyById<T>(finds: [string | number, T][]) {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
-    let ret = [];
-    finds.forEach(async id => {
-      const result: FindCursor<WithId<T>> = await colRef.find({_id: id});
-      ret.push(result);
+    // console.log(finds);
+    // let ret = [];
+    // finds.forEach(async id => {
+    //   const result = await colRef.findOne({ id: id });
+    //   console.log(result);
+    //   console.log(id);
+    //   ret.push(result);
+    // });
+    // return ret;
+    const findPromises = finds.map(([id]) => {
+      const docId: string = typeof id === 'string' ? id : id.toString();
+      return colRef.findOne({ id: id});
     });
-    return ret;
+
+    const findResults = await Promise.all(findPromises);
+    return findResults;
   }
 
   // Update
