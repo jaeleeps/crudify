@@ -6,49 +6,50 @@ import { CollectionReference, DocumentReference } from '@google-cloud/firestore'
 import firebase from 'firebase';
 import WriteBatch = firebase.firestore.WriteBatch;
 import WriteResult = firestore.WriteResult;
+import UpdateData = firestore.UpdateData;
 
 export class FirestoreCollection<T> extends Collection<T> {
   constructor(config: BucketConfiguration, db: Firestore, name: string) {
     super(config, db, name);
-    this.ref = db.collection(name) as CollectionReference<T>;
+    this.ref = db.collection(name) as unknown as CollectionReference<T>;
   }
-  public async createOne<T>(_id: string | number, document: T): any {
+  public async createOne<T>(_id: string | number, document: T): Promise<FirebaseFirestore.WriteResult> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result: FirebaseFirestore.WriteResult = await colRef.doc(id).set(document);
     return result;
   }
 
-  public async createMany<T>(creates: [string | number, T][]) {
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+  public async createMany<T>(creates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const batch: FirebaseFirestore.WriteBatch = (this.db as Firestore).batch();
 
     const createPromises = creates.map(([id, document]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
-      const docRef: DocumentReference<T> = colRef.doc(id);
+      const docRef: DocumentReference<T> = colRef.doc(docId);
       batch.set(docRef, document);
     });
 
-    const result: Promise<WriteResult[]> = await batch.commit();
+    const result: FirebaseFirestore.WriteResult[] = await batch.commit();
     return result;
   }
 
   // Read
-  public async findOneById<T>(id: string | number) {}
+  public async findOneById<T>(id: string | number): Promise<any> {}
 
   // Update
   public async updateOneById<T>(_id: string | number, document: T): Promise<FirebaseFirestore.WriteResult> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
-    const result: FirebaseFirestore.WriteResult = await colRef.doc(id).update(document);
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
+    const result: FirebaseFirestore.WriteResult = await colRef.doc(id).update(document as UpdateData<T>);
     return result;
   }
 
   public async updateAllById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const updatePromises = updates.map(([id, document]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
-      return colRef.doc(docId).update(document);
+      return colRef.doc(docId).update(document as UpdateData<T>);
     });
 
     const updateResults = await Promise.all(updatePromises);
@@ -57,13 +58,13 @@ export class FirestoreCollection<T> extends Collection<T> {
 
   public async deleteOneByID<T>(_id: string | number): Promise<FirebaseFirestore.WriteResult> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result: FirebaseFirestore.WriteResult = await colRef.doc(id).delete();
     return result;
   }
 
   public async deleteManyByID<T>(deletes: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const deletePromises = deletes.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).delete();

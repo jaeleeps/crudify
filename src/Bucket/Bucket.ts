@@ -3,6 +3,10 @@ import { AppDatabase, DatabaseType } from '../type/database.enum';
 import { Collection } from '../Collection/Collection';
 import { MongoCollection } from '../Collection/MongoCollection';
 import { FirestoreCollection } from '../Collection/FirestoreCollection';
+import { Db } from 'mongodb';
+import { firestore } from 'firebase-admin';
+import firebase from 'firebase';
+import Firestore = firestore.Firestore;
 
 export class Bucket {
   get db(): AppDatabase {
@@ -50,11 +54,11 @@ export class Bucket {
   }
 
   public addCollection<T>(name: string): null | Collection<T> {
-    let newCollection: Collection<T>;
+    let newCollection: null | Collection<T> = null;
     if (this.type === DatabaseType.Mongo) {
-      newCollection = new MongoCollection<T>(this.config, this.db, name);
+      newCollection = new MongoCollection<T>(this.config, this.db as Db, name);
     } else if (this.type === DatabaseType.Firestore) {
-      newCollection = new FirestoreCollection<T>(this.config, this.db, name);
+      newCollection = new FirestoreCollection<T>(this.config, this.db as Firestore, name);
     }
     return newCollection;
   }

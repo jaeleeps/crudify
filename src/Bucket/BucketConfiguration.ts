@@ -14,7 +14,7 @@ export abstract class BucketConfiguration {
   }
 
   protected abstract _initialize(): AppClient;
-  protected abstract async _connect(app: AppClient): Promise<AppDatabase>;
+  protected abstract _connect(app: AppClient): Promise<AppDatabase>;
   public async initializae(): Promise<AppDatabase> {
     const appClient: AppClient = this._initialize();
     const connectedAppClient: AppDatabase = await this._connect(appClient);

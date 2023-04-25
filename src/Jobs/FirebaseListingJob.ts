@@ -34,7 +34,7 @@ function processRow(row: any): Listing {
   };
 }
 
-function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err: Error | null) => void) => void): void {
+function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err: any | null) => void) => void): void {
   const q = async.queue(onRowParsed, 10); // Adjust concurrency value if needed
 
   createReadStream(path)
@@ -53,14 +53,14 @@ function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err:
 }
 
 // This function will be called for each parsed row
-async function handleParsedRow(row: Listing, callback: (err: Error | null) => void): Promise<void> {
+async function handleParsedRow(row: Listing, callback: (err: any | null) => void): Promise<void> {
   const db = firebase.firestore();
   try {
     const docRef = await db.collection('Listings').doc(row.id.toString());
     await docRef.set(row);
     console.log('Row inserted:', row.id);
     callback(null);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error inserting row:', err);
     callback(err);
   }
@@ -70,14 +70,14 @@ async function handleParsedRow(row: Listing, callback: (err: Error | null) => vo
 async function runJob(): Promise<void> {
   firebase.initializeApp(testFirebaseConfig);
 
-  const onRowParsed = async (row: Listing, callback: (err: Error | null) => void) => {
+  const onRowParsed = async (row: Listing, callback: (err: any | null) => void) => {
     try {
       const db = firebase.firestore();
       const docRef = await db.collection('Listings').doc(row.id.toString());
       await docRef.set(row);
       console.log('Row inserted:', row.id);
       callback(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error inserting row:', row);
       callback(err);
     }

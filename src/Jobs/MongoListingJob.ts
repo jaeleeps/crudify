@@ -1,9 +1,11 @@
 import { createReadStream } from 'fs';
-import * as csvParser from 'csv-parser';
+// import * as csvParser from 'csv-parser';
 import { Listing } from './AirbnbDataModels.interface';
 import { testMongoDBAtlasPassword } from '../../__test__/env/testMongoDBAtlasConfig';
 import * as async from 'async';
 import { MongoClient } from 'mongodb';
+import firebase from 'firebase';
+import Error = firebase.auth.Error;
 const filePath = 'listings.csv';
 
 function processRow(row: any): Listing {
@@ -33,14 +35,14 @@ function processRow(row: any): Listing {
   };
 }
 
-function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err: Error | null) => void) => void): void {
+function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err: any | null) => void) => void): void {
   const q = async.queue(onRowParsed, 10); // Adjust concurrency value if needed
 
   createReadStream(path)
     .pipe(csvParser())
     .on('data', (row: any) => {
       const parsedRow = processRow(row);
-      q.push(parsedRow, (err) => {
+      q.push(parsedRow, (err: any) => {
         if (err) console.error('Error processing row:', err);
       });
     })
@@ -52,14 +54,14 @@ function parseLargeCSV(path: string, onRowParsed: (row: Listing, callback: (err:
 }
 
 // This function will be called for each parsed row
-async function handleParsedRow(row: Listing, callback: (err: Error | null) => void): Promise<void> {
+async function handleParsedRow(row: Listing, callback: (err: any | null) => void): Promise<void> {
   const client = await connectToDB();
   try {
     const collection = client.db('airbnb').collection('Listings');
     await collection.insertOne(row);
     console.log('Row inserted:', row.id);
     callback(null);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error inserting row:', err);
     callback(err);
   } finally {
@@ -70,13 +72,13 @@ async function handleParsedRow(row: Listing, callback: (err: Error | null) => vo
 // Start parsing the large CSV file
 async function runJob(): Promise<void> {
   const client = await connectToDB();
-  const onRowParsed = async (row: Listing, callback: (err: Error | null) => void) => {
+  const onRowParsed = async (row: Listing, callback: (err: any | null) => void) => {
     try {
       const collection = client.db('airbnb').collection('Listings');
       await collection.insertOne(row);
       console.log('Row inserted:', row.id);
       callback(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error inserting row:', err);
       callback(err);
     }
@@ -97,7 +99,7 @@ async function connectToDB(): Promise<MongoClient> {
   try {
     await client.connect();
     console.log('Connected to MongoDB Atlas');
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error connecting to MongoDB Atlas:', err);
     process.exit(1);
   }
