@@ -25,5 +25,8 @@ export abstract class Collection<T> {
   public abstract async updateOneById<T>(id: string | number, document: T);
   public abstract async updateAllById<T>(updates: [string | number, T][]);
 
-  // Delete
+ // Delete
+
+  public abstract async deleteOneByID<T> (id: string | number);
+  public abstract async deleteManyByID<T> (deletes: [string | number][])
 }
