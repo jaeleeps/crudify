@@ -3,6 +3,7 @@ import { Collection } from './Collection';
 import {Db, FindCursor, InsertOneResult, UpdateResult, WithId} from 'mongodb';
 import { CollectionReference } from '@google-cloud/firestore';
 import { MongoDbCollection } from '../type/database.enum';
+import {IUser} from "../../__test__/Test.interface";
 
 export class MongoCollection<T> extends Collection<T> {
   constructor(config: BucketConfiguration, db: Db, name: string) {
@@ -25,9 +26,10 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
   // Read
-  public async findOneById<T>(_id: string | number, document: T): Promise<FindCursor<WithId<T>>> {
+  public async findOneById<T>(_id: string | number, document: T) {
     const colRef: MongoDbCollection<T> = this.ref as MongoDbCollection<T>;
-    const result: Promise<FindCursor<WithId<T>>> = await colRef.find({ _id: _id });
+    const id: string = typeof _id === 'string' ? _id: _id.toString();
+    const result = await colRef.findOne({ id: id });
     return result;
   }
 

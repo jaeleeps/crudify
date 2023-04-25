@@ -104,17 +104,40 @@ test("Firebase_Find_Many", async() => {
 
 })
 
-function generateUsers(count: number) : IUser[] {
-    const newUsers : IUser[] = [];
-    for (let i = 0; i < count; i++) {
-        const newUser: IUser = {
-            id: '1234' + i,
-            name: 'John Doe Version' + i,
-            email: 'johndoe@example.com' + i,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-        newUsers.push(newUser);
-    }
-    return newUsers;
-}
+test("Mongo_Find_One", async() => {
+    const password: string = testMongoDBAtlasPassword;
+    const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
+    const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
+    const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
+
+    const bucket: Bucket = new Bucket(mongoBucketConfig);
+
+    const db: AppDatabase = await bucket.initialize();
+
+    const newUser: IUser = {
+        id: '2003',
+        name: 'Karam Jivani',
+        email: 'johndoe@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    };
+
+    const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
+    const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
+
+    const result = await collection.createOne<IUser>(newUser.id, newUser);
+    const userID = result.insertedId;
+    console.log(result);
+
+    const user = await mongoCollection.findOne({ _id: userID });
+    // console.log(user);
+
+    const findResult = await collection.findOneById(newUser.id);
+    // console.log(findResult);
+    const foundUser: IUser = findResult as IUser;
+
+
+    expect(foundUser.id).toBe(newUser.id);
+    expect(foundUser.name).toBe(newUser.name);
+    expect(foundUser.email).toBe(newUser.email);
+})
