@@ -35,16 +35,16 @@ export class FirestoreCollection<T> extends Collection<T> {
   }
 
   // Read
-  public async findOneById<T>(_id: string | number) {
-    const id: string = typeof _id === 'string' ? _id: _id.toString();
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+  public async findOneById<T>(_id: string | number): Promise<T | null> {
+    const id: string = typeof _id === 'string' ? _id : _id.toString();
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result = await colRef.doc(id).get();
-    const ret = result.data();
+    const ret: T | null = result.data();
     return ret;
   }
 
-  public async findManyById<T>(finds: [string | number, T][]) {
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+  public async findManyById<T>(finds: [string | number, T][]): Promise<(T | null)[]> {
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const findPromises = finds.map(([id]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).get();
@@ -52,7 +52,7 @@ export class FirestoreCollection<T> extends Collection<T> {
 
     const findResults = await Promise.all(findPromises);
     const ret = [];
-    findResults.forEach(el => ret.push(el.data()));
+    findResults.forEach((el) => ret.push(el.data()));
     return ret;
   }
 

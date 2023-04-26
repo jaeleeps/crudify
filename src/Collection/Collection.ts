@@ -21,9 +21,9 @@ export abstract class Collection<T> {
   public abstract createMany<T>(creates: [string | number, T][]): any;
 
   // Read
-  public abstract async findOneById<T>(_id: string | number);
-  public abstract async findManyById<T>(finds: [string | number, T][]);
-  
+  public abstract findOneById<T>(_id: string | number): any;
+  public abstract findManyById<T>(finds: [string | number, T][]): any;
+
   // Update
   public abstract updateOneById<T>(id: string | number, document: T): any;
   public abstract updateAllById<T>(updates: [string | number, T][]): any;
