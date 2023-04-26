@@ -35,7 +35,26 @@ export class FirestoreCollection<T> extends Collection<T> {
   }
 
   // Read
-  public async findOneById<T>(id: string | number): Promise<any> {}
+  public async findOneById<T>(_id: string | number) {
+    const id: string = typeof _id === 'string' ? _id: _id.toString();
+    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const result = await colRef.doc(id).get();
+    const ret = result.data();
+    return ret;
+  }
+
+  public async findManyById<T>(finds: [string | number, T][]) {
+    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+    const findPromises = finds.map(([id]) => {
+      const docId: string = typeof id === 'string' ? id : id.toString();
+      return colRef.doc(docId).get();
+    });
+
+    const findResults = await Promise.all(findPromises);
+    const ret = [];
+    findResults.forEach(el => ret.push(el.data()));
+    return ret;
+  }
 
   // Update
   public async updateOneById<T>(_id: string | number, document: T): Promise<FirebaseFirestore.WriteResult> {
