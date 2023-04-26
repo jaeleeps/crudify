@@ -64,7 +64,7 @@ export class FirestoreCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async updateAllById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
+  public async updateManyById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const updatePromises = updates.map(([id, document]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();

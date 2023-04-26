@@ -61,7 +61,7 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async updateAllById<T>(updates: [string | number, T][]): Promise<UpdateResult[]> {
+  public async updateManyById<T>(updates: [string | number, T][]): Promise<UpdateResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const updatePromises = updates.map(async ([id, document]) => {
       const result: UpdateResult = await colRef.updateOne({ _id: id } as Filter<T>, { $set: document });

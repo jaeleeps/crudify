@@ -26,7 +26,7 @@ export abstract class Collection<T> {
 
   // Update
   public abstract updateOneById<T>(id: string | number, document: T): any;
-  public abstract updateAllById<T>(updates: [string | number, T][]): any;
+  public abstract updateManyById<T>(updates: [string | number, T][]): any;
 
   // Delete
 
