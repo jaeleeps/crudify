@@ -21,8 +21,8 @@ export abstract class Collection<T> {
   public abstract createMany<T>(creates: [string | number, T][]): any;
 
   // Read
-  public abstract findOneById<T>(_id: string | number): any;
-  public abstract findManyById<T>(finds: [string | number, T][]): any;
+  public abstract readOneById<T>(_id: string | number): any;
+  public abstract readManyById<T>(ids: [string | number, T][]): any;
 
   // Update
   public abstract updateOneById<T>(id: string | number, document: T): any;
@@ -30,6 +30,6 @@ export abstract class Collection<T> {
 
   // Delete
 
-  public abstract deleteOneByID<T>(id: string | number): any;
-  public abstract deleteManyByID<T>(deletes: [string | number][]): any;
+  public abstract deleteOneById<T>(id: string | number): any;
+  public abstract deleteManyById<T>(ids: [string | number][]): any;
 }

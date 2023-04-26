@@ -35,7 +35,7 @@ export class FirestoreCollection<T> extends Collection<T> {
   }
 
   // Read
-  public async findOneById<T>(_id: string | number): Promise<T | null> {
+  public async readOneById<T>(_id: string | number): Promise<T | null> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result = await colRef.doc(id).get();
@@ -43,9 +43,9 @@ export class FirestoreCollection<T> extends Collection<T> {
     return ret;
   }
 
-  public async findManyById<T>(finds: [string | number, T][]): Promise<(T | null)[]> {
+  public async readManyById<T>(ids: [string | number, T][]): Promise<(T | null)[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
-    const findPromises = finds.map(([id]) => {
+    const findPromises = ids.map(([id]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).get();
     });
@@ -75,16 +75,16 @@ export class FirestoreCollection<T> extends Collection<T> {
     return updateResults;
   }
 
-  public async deleteOneByID<T>(_id: string | number): Promise<FirebaseFirestore.WriteResult> {
+  public async deleteOneById<T>(_id: string | number): Promise<FirebaseFirestore.WriteResult> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result: FirebaseFirestore.WriteResult = await colRef.doc(id).delete();
     return result;
   }
 
-  public async deleteManyByID<T>(deletes: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
+  public async deleteManyById<T>(ids: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
-    const deletePromises = deletes.map((id) => {
+    const deletePromises = ids.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).delete();
     });

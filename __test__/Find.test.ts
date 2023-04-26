@@ -39,7 +39,7 @@ test("Firebase_Find_One", async() => {
     expect(ogUser.name).toBe(newUser.name);
     expect(ogUser.email).toBe(newUser.email);
 
-    const findResult = await collection.findOneById(ogUser.id);
+    const findResult = await collection.readOneById(ogUser.id);
     console.log(findResult);
     const foundUser: IUser = findResult as IUser;
 
@@ -88,7 +88,7 @@ test("Firebase_Find_Many", async() => {
 
     const result = collection.createMany<IUser>(finds);
 
-    const findResult = await collection.findManyById(finds);
+    const findResult = await collection.readManyById(finds);
 
 
     expect(findResult[0].id).toBe(newUsers[0].id);
@@ -131,7 +131,7 @@ test("Mongo_Find_One", async() => {
     const user = await mongoCollection.findOne({ _id: userID });
     // console.log(user);
 
-    const findResult = await collection.findOneById(newUser.id);
+    const findResult = await collection.readOneById(newUser.id);
     // console.log(findResult);
     const foundUser: IUser = findResult as IUser;
 
@@ -182,7 +182,7 @@ test("Mongo_Find_Many", async() => {
 
     const finds: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
 
-    const findResult = await collection.findManyById(finds);
+    const findResult = await collection.readManyById(finds);
     console.log(findResult);
 
     expect(findResult[0].id).toBe(newUsers[0].id);
