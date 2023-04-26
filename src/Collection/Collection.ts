@@ -21,15 +21,15 @@ export abstract class Collection<T> {
   public abstract createMany<T>(creates: [string | number, T][]): any;
 
   // Read
-  public abstract async findOneById<T>(_id: string | number);
-  public abstract async findManyById<T>(finds: [string | number, T][]);
-  
+  public abstract readOneById<T>(_id: string | number): any;
+  public abstract readManyById<T>(ids: [string | number, T][]): any;
+
   // Update
   public abstract updateOneById<T>(id: string | number, document: T): any;
-  public abstract updateAllById<T>(updates: [string | number, T][]): any;
+  public abstract updateManyById<T>(updates: [string | number, T][]): any;
 
   // Delete
 
-  public abstract deleteOneByID<T>(id: string | number): any;
-  public abstract deleteManyByID<T>(deletes: [string | number][]): any;
+  public abstract deleteOneById<T>(id: string | number): any;
+  public abstract deleteManyById<T>(ids: [string | number][]): any;
 }

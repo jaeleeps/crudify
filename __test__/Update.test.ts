@@ -92,7 +92,7 @@ test("Firebase_Collection_UpdateMany", async () => {
     expect(userData.name).toBe(ogNames[i]);
   }
 
-  const testResult = await collection.updateAllById(updatingUsers);
+  const testResult = await collection.updateManyById(updatingUsers);
   console.log(testResult);
   for (let i = 0; i <count; i++) {
     const updatedUser = await firestoreCollection.doc(ogIds[i]).get();
@@ -195,7 +195,7 @@ test("Mongo_Collection_UpdateMany", async () => {
   }
 
   console.log(userIDs);
-  const updateResult = await collection.updateAllById(updatingUsers);
+  const updateResult = await collection.updateManyById(updatingUsers);
   console.log(updateResult);
 
   const afterNames : string[] = [];

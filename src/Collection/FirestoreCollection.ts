@@ -35,24 +35,24 @@ export class FirestoreCollection<T> extends Collection<T> {
   }
 
   // Read
-  public async findOneById<T>(_id: string | number) {
-    const id: string = typeof _id === 'string' ? _id: _id.toString();
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
+  public async readOneById<T>(_id: string | number): Promise<T | null> {
+    const id: string = typeof _id === 'string' ? _id : _id.toString();
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result = await colRef.doc(id).get();
-    const ret = result.data();
+    const ret: T | null = result.data();
     return ret;
   }
 
-  public async findManyById<T>(finds: [string | number, T][]) {
-    const colRef: CollectionReference<T> = this.ref as CollectionReference<T>;
-    const findPromises = finds.map(([id]) => {
+  public async readManyById<T>(ids: [string | number, T][]): Promise<(T | null)[]> {
+    const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
+    const findPromises = ids.map(([id]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).get();
     });
 
     const findResults = await Promise.all(findPromises);
     const ret = [];
-    findResults.forEach(el => ret.push(el.data()));
+    findResults.forEach((el) => ret.push(el.data()));
     return ret;
   }
 
@@ -64,7 +64,7 @@ export class FirestoreCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async updateAllById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
+  public async updateManyById<T>(updates: [string | number, T][]): Promise<FirebaseFirestore.WriteResult[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const updatePromises = updates.map(([id, document]) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
@@ -75,16 +75,16 @@ export class FirestoreCollection<T> extends Collection<T> {
     return updateResults;
   }
 
-  public async deleteOneByID<T>(_id: string | number): Promise<FirebaseFirestore.WriteResult> {
+  public async deleteOneById<T>(_id: string | number): Promise<FirebaseFirestore.WriteResult> {
     const id: string = typeof _id === 'string' ? _id : _id.toString();
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const result: FirebaseFirestore.WriteResult = await colRef.doc(id).delete();
     return result;
   }
 
-  public async deleteManyByID<T>(deletes: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
+  public async deleteManyById<T>(ids: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
-    const deletePromises = deletes.map((id) => {
+    const deletePromises = ids.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).delete();
     });
