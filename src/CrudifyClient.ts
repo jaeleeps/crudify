@@ -1,9 +1,10 @@
 import { Bucket } from './Bucket/Bucket';
+import { BucketConfiguration } from './Bucket/BucketConfiguration';
 
 export class CrudifyClient {
   private static instance: CrudifyClient;
 
-  private defaultBucket: Bucket = new Bucket();
+  private defaultBucket: Bucket | null = null;
   private bucketMap: { [key: string]: Bucket } = {};
 
   private constructor() {
@@ -16,7 +17,7 @@ export class CrudifyClient {
     }
     return CrudifyClient.instance;
   }
-  public getDefaultBucket(): Bucket {
+  public getDefaultBucket(): Bucket | null {
     return this.defaultBucket;
   }
   public setDefaultBucket(id: string): Bucket | null {
@@ -31,8 +32,11 @@ export class CrudifyClient {
     return this.bucketMap.hasOwnProperty(id) ? this.bucketMap[id] : null;
   }
 
-  public addBucket(id: string): Bucket {
-    const newBucket = new Bucket();
+  public addBucket(config: BucketConfiguration, id: string): Bucket {
+    const newBucket = new Bucket(config, id);
+    if (this.defaultBucket === null) {
+      this.defaultBucket = newBucket;
+    }
     this.bucketMap[id] = newBucket;
     return newBucket;
   }

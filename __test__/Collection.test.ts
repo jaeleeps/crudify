@@ -9,12 +9,12 @@ import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration
 import { AppDatabase } from '../src/type/database.enum';
 import { IUser } from './Test.interface';
 import { Collection } from '../src/Collection/Collection';
-import {testRun} from "../src/Jobs/MongoListingJob";
+import {testRun} from "../../demo_data/Jobs/MongoListingJob";
 
 test("Firebase_Collection_Initialization", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const firebaseBucket: Bucket = new Bucket(firebaseBucketConfig);
+  const firebaseBucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
   const db: AppDatabase = await firebaseBucket.initialize();
   expect(db).not.toBe(null);
   const collection: Collection<IUser> = firebaseBucket.addCollection<IUser>('users');
@@ -28,7 +28,7 @@ test("Mongo_Collection_Initialization", async () => {
   const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
   const config: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(config);
-  const mongoBucket: Bucket = new Bucket(mongoBucketConfig);
+  const mongoBucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await mongoBucket.initialize();
   expect(db).not.toBe(null);

@@ -21,9 +21,9 @@ export class FirestoreBucketConfiguration extends BucketConfiguration {
     }
   }
 
-  protected async _connect(app: AppClient): Promise<Firestore> {
-    const db: firebase.firestore.Firestore = (app as App).firestore();
-    return new Promise<Firestore>((resolve) => {
+  protected async _connect(app: AppClient): Promise<any> {
+    const db = (app as App).firestore();
+    return new Promise<any>((resolve) => {
       resolve(db);
     });
   }

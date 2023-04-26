@@ -6,11 +6,14 @@
     "target": "ES2015", // or "ESNext"
     "declaration": true,
     "outDir": "./lib",
-    "strict": true,
+//    "strict": true,
+    "strictPropertyInitialization": false,
     "lib": [
       "dom",
-      "scripthost"
-    ],
+      "scripthost",
+      "es2015.promise",
+      "es2015.iterable"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules"]

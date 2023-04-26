@@ -16,7 +16,7 @@ import {ObjectId} from "mongodb";
 test("Firebase_Collection_UpdateOne", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -63,7 +63,7 @@ test("Firebase_Collection_UpdateOne", async () => {
 test("Firebase_Collection_UpdateMany", async () => {
   const config: IFirestoreConfiguration = testFirebaseConfig;
   const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-  const bucket: Bucket = new Bucket(firebaseBucketConfig);
+  const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
   const count = 5;
   const db: AppDatabase = await bucket.initialize();
 
@@ -109,7 +109,7 @@ test("Mongo_Collection_UpdateOne", async () => {
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
+  const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
@@ -168,7 +168,7 @@ test("Mongo_Collection_UpdateMany", async () => {
   const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
   const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
   const count = 5;
-  const bucket: Bucket = new Bucket(mongoBucketConfig);
+  const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
   const db: AppDatabase = await bucket.initialize();
 
