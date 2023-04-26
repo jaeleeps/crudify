@@ -40,7 +40,7 @@ export class MongoCollection<T> extends Collection<T> {
   public async readOneById<T>(_id: string | number): Promise<WithId<T> | null> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const result: WithId<T> | null = await colRef.findOne({ id: id } as unknown  as Filter<T>);
+    const result: WithId<T> | null = await colRef.findOne({ id: id } as unknown as Filter<T>);
     return result;
   }
 
