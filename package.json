@@ -1,6 +1,6 @@
 {
   "name": "crudbox",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "all in one NPM module for CRUD operations",
   "main": "index.ts",
   "scripts": {

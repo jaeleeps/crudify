@@ -124,15 +124,15 @@ test("Mongo_Collection_DeleteOne", async () => {
     const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
     const result = await collection.createOne<IUser>(newUser.id, newUser);
-    const userID = result.insertedId;
+    const userID = result.id;
     console.log(result);
 
-    const user = await mongoCollection.findOne({ _id: userID });
+    const user = await mongoCollection.findOne({ id: userID });
 
     const updateResult = await collection.deleteOneById(userID);
     console.log(updateResult);
 
-    const deletedUser = await mongoCollection.findOne({_id: userID});
+    const deletedUser = await mongoCollection.findOne({id: userID});
 
     console.log(deletedUser);
     expect(deletedUser).toBe(null);
@@ -143,11 +143,11 @@ test("Mongo_Collection_DeleteMany", async () => {
     const connectionURI: string = `mongodb+srv://jaeleeps:${password}@cluster0.cfhx0ec.mongodb.net/?retryWrites=true&w=majority`;
     const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
     const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
-    const count = 5;
     const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
     const db: AppDatabase = await bucket.initialize();
 
+    const count = 5;
     const newUsers : IUser[] = generateUsers(count);
 
     const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
@@ -157,19 +157,15 @@ test("Mongo_Collection_DeleteMany", async () => {
 
 
     const originalUsers = await mongoCollection.find({}).limit(5).toArray();
-    const userIDs : ObjectId[] = [];
-
-    for (let i = 0; i < count; i++) {
-        userIDs.push(originalUsers[i]._id);
-    }
-
+    const userIDs : string[] = originalUsers.map(user => user.id);
     console.log(userIDs);
+
     const updateResult = await collection.deleteManyById(userIDs);
     console.log(updateResult);
 
-    const afterUsers : string[] = [];
+    const afterUsers : any[] = [];
     for (let i = 0; i < count; i++) {
-        const after = await mongoCollection.findOne({_id: userIDs[i]});
+        const after = await mongoCollection.findOne({id: userIDs[i]});
         afterUsers.push(after);
     }
     console.log(afterUsers);
