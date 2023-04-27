@@ -1,3 +1,4 @@
+
 import { BucketConfiguration } from '../Bucket/BucketConfiguration';
 import { AppCollection, AppDatabase, DatabaseType, IDatabaseConfiguration } from '../type/database.enum';
 
@@ -22,7 +23,7 @@ export abstract class Collection<T> {
 
   // Read
   public abstract readOneById<T>(_id: string | number): any;
-  public abstract readManyById<T>(ids: [string | number, T][]): any;
+  public abstract readManyById<T>(ids: (string | number)[]): any;
 
   // Update
   public abstract updateOneById<T>(id: string | number, document: T): any;

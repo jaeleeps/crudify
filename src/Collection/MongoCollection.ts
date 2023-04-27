@@ -44,9 +44,9 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async readManyById<T>(ids: [string | number, T][]): Promise<(WithId<T> | null)[]> {
+  public async readManyById<T>(ids: (string | number)[]): Promise<(WithId<T> | null)[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const findPromises = ids.map(([id]) => {
+    const findPromises = ids.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.findOne({ id: docId } as unknown as Filter<T>);
     });

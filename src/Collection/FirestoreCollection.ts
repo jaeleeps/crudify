@@ -43,9 +43,9 @@ export class FirestoreCollection<T> extends Collection<T> {
     return ret;
   }
 
-  public async readManyById<T>(ids: [string | number, T][]): Promise<(T | null)[]> {
+  public async readManyById<T>(ids: (string | number)[]): Promise<(T | null)[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
-    const findPromises = ids.map(([id]) => {
+    const findPromises = ids.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
       return colRef.doc(docId).get();
     });
