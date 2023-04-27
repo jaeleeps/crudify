@@ -2,12 +2,13 @@ import { BucketConfiguration } from '../Bucket/BucketConfiguration';
 import { Collection } from './Collection';
 
 import {
+  Condition,
   Db,
   DeleteResult,
-  Filter,
+  Filter, FindCursor,
   InsertManyResult,
-  InsertOneResult,
-  OptionalUnlessRequiredId,
+  InsertOneResult, ObjectId,
+  OptionalUnlessRequiredId, RegExpOrString,
   UpdateResult,
   WithId,
 } from 'mongodb';
@@ -39,32 +40,28 @@ export class MongoCollection<T> extends Collection<T> {
   // Read
   public async readOneById<T>(_id: string | number): Promise<WithId<T> | null> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const result: WithId<T> | null = await colRef.findOne({ id: id } as unknown as Filter<T>);
+    const result: WithId<T> | null = await colRef.findOne({ id: _id } as unknown as Filter<T>);
     return result;
   }
 
   public async readManyById<T>(ids: (string | number)[]): Promise<(WithId<T> | null)[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const findPromises = ids.map((id) => {
-      const docId: string = typeof id === 'string' ? id : id.toString();
-      return colRef.findOne({ id: docId } as unknown as Filter<T>);
-    });
-    const findResults = await Promise.all(findPromises);
+    const findCursor: FindCursor = await colRef.find( { id : {"$in" : ids } as unknown as RegExpOrString<WithId<T>>} );
+    const findResults = findCursor.toArray();
     return findResults;
   }
 
   // Update
   public async updateOneById<T>(id: string | number, document: T): Promise<UpdateResult> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const result: UpdateResult = await colRef.updateOne({ _id: id } as Filter<T>, { $set: document });
+    const result: UpdateResult = await colRef.updateOne({ id: id } as Filter<T>, { $set: document });
     return result;
   }
 
   public async updateManyById<T>(updates: [string | number, T][]): Promise<UpdateResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const updatePromises = updates.map(async ([id, document]) => {
-      const result: UpdateResult = await colRef.updateOne({ _id: id } as Filter<T>, { $set: document });
+      const result: UpdateResult = await colRef.updateOne({ id: id } as Filter<T>, { $set: document });
       return result;
     });
     const updateResults = await Promise.all(updatePromises);
