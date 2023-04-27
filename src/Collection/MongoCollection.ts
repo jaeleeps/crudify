@@ -79,10 +79,10 @@ export class MongoCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async deleteManyById<T>(ids: [string | number][]): Promise<DeleteResult[]> {
+  public async deleteManyById<T>(ids: [string | number | object][]): Promise<DeleteResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const deletePromises = ids.map(async (id) => {
-      const result: DeleteResult = await colRef.deleteOne(id as Filter<T>);
+      const result: DeleteResult = await colRef.deleteOne({ _id: id } as Filter<T>);
       return result;
     });
 

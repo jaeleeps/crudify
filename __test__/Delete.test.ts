@@ -157,10 +157,10 @@ test("Mongo_Collection_DeleteMany", async () => {
 
 
     const originalUsers = await mongoCollection.find({}).limit(5).toArray();
-    const userIDs : ObjectId[] = [];
+    const userIDs : object[] = [];
 
     for (let i = 0; i < count; i++) {
-        userIDs.push(originalUsers[i]._id);
+        userIDs.push(originalUsers[i]._id as object);
     }
 
     console.log(userIDs);
@@ -169,7 +169,7 @@ test("Mongo_Collection_DeleteMany", async () => {
 
     const afterUsers : string[] = [];
     for (let i = 0; i < count; i++) {
-        const after = await mongoCollection.findOne({_id: userIDs[i]});
+        const after = await mongoCollection.findOne({_id: userIDs[i] } );
         afterUsers.push(after);
     }
     console.log(afterUsers);
