@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+//    "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "target": "ES2015", // or "ESNext"
+//    "target": "ES2015", // or "ESNext"
+    "target": "esnext",
+    "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
 //    "strict": true,

@@ -2,12 +2,16 @@ import { BucketConfiguration } from '../Bucket/BucketConfiguration';
 import { Collection } from './Collection';
 
 import {
+  Condition,
   Db,
   DeleteResult,
   Filter,
+  FindCursor,
   InsertManyResult,
   InsertOneResult,
+  ObjectId,
   OptionalUnlessRequiredId,
+  RegExpOrString,
   UpdateResult,
   WithId,
 } from 'mongodb';
@@ -24,7 +28,6 @@ export class MongoCollection<T> extends Collection<T> {
   // CRUD
   // Create
   public async createOne<T>(_id: string | number, document: T): Promise<InsertOneResult> {
-    const id: string = typeof _id === 'string' ? _id : _id.toString();
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const result: InsertOneResult<T> = await colRef.insertOne(document as OptionalUnlessRequiredId<T>);
     return result;
@@ -39,32 +42,28 @@ export class MongoCollection<T> extends Collection<T> {
   // Read
   public async readOneById<T>(_id: string | number): Promise<WithId<T> | null> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const id: string = typeof _id === 'string' ? _id : _id.toString();
-    const result: WithId<T> | null = await colRef.findOne({ id: id } as unknown as Filter<T>);
+    const result: WithId<T> | null = await colRef.findOne({ id: _id } as unknown as Filter<T>);
     return result;
   }
 
   public async readManyById<T>(ids: (string | number)[]): Promise<(WithId<T> | null)[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const findPromises = ids.map((id) => {
-      const docId: string = typeof id === 'string' ? id : id.toString();
-      return colRef.findOne({ id: docId } as unknown as Filter<T>);
-    });
-    const findResults = await Promise.all(findPromises);
+    const findCursor: FindCursor = await colRef.find({ id: { $in: ids } as unknown as RegExpOrString<WithId<T>> });
+    const findResults = findCursor.toArray();
     return findResults;
   }
 
   // Update
   public async updateOneById<T>(id: string | number, document: T): Promise<UpdateResult> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const result: UpdateResult = await colRef.updateOne({ _id: id } as Filter<T>, { $set: document });
+    const result: UpdateResult = await colRef.updateOne({ id: id } as unknown as Filter<T>, { $set: document });
     return result;
   }
 
   public async updateManyById<T>(updates: [string | number, T][]): Promise<UpdateResult[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
     const updatePromises = updates.map(async ([id, document]) => {
-      const result: UpdateResult = await colRef.updateOne({ _id: id } as Filter<T>, { $set: document });
+      const result: UpdateResult = await colRef.updateOne({ id: id } as unknown as Filter<T>, { $set: document });
       return result;
     });
     const updateResults = await Promise.all(updatePromises);
@@ -75,18 +74,13 @@ export class MongoCollection<T> extends Collection<T> {
 
   public async deleteOneById<T>(id: string | number): Promise<DeleteResult> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const result: DeleteResult = await colRef.deleteOne({ _id: id } as Filter<T>);
+    const result: DeleteResult = await colRef.deleteOne({ id: id } as unknown as Filter<T>);
     return result;
   }
 
-  public async deleteManyById<T>(ids: [string | number][]): Promise<DeleteResult[]> {
+  public async deleteManyById<T>(ids: [string | number][]): Promise<DeleteResult> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const deletePromises = ids.map(async (id) => {
-      const result: DeleteResult = await colRef.deleteOne(id as Filter<T>);
-      return result;
-    });
-
-    const deleteResults = await Promise.all(deletePromises);
+    const deleteResults = await colRef.deleteMany({ id: { $in: ids } as unknown as Filter<T> });
     return deleteResults;
   }
 }
