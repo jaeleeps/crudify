@@ -14,7 +14,7 @@ import { Collection } from '../src/Collection/Collection';
 test("Firebase_Find_One", async() => {
     const config: IFirestoreConfiguration = testFirebaseConfig;
     const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-    const bucket: Bucket = new Bucket(firebaseBucketConfig);
+    const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
 
     const db: AppDatabase = await bucket.initialize();
 
@@ -52,7 +52,7 @@ test("Firebase_Find_One", async() => {
 test("Firebase_Find_Many", async() => {
     const config: IFirestoreConfiguration = testFirebaseConfig;
     const firebaseBucketConfig: BucketConfiguration = new FirestoreBucketConfiguration(config);
-    const bucket: Bucket = new Bucket(firebaseBucketConfig);
+    const bucket: Bucket = new Bucket(firebaseBucketConfig, "test_bucket");
     const count = 5;
     const db: AppDatabase = await bucket.initialize();
 
@@ -84,9 +84,11 @@ test("Firebase_Find_Many", async() => {
         }
     ];
 
-    const finds: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
+    const creates: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
 
-    const result = collection.createMany<IUser>(finds);
+    const result = collection.createMany<IUser>(creates);
+
+    const finds: (string|number)[] = newUsers.map((user: IUser) => user.id);
 
     const findResult = await collection.readManyById(finds);
 
@@ -109,7 +111,7 @@ test("Mongo_Find_One", async() => {
     const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
     const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-    const bucket: Bucket = new Bucket(mongoBucketConfig);
+    const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
     const db: AppDatabase = await bucket.initialize();
 
@@ -147,7 +149,7 @@ test("Mongo_Find_Many", async() => {
     const mongoConfig: IMongoConfiguration = { uri: connectionURI, database: "airbnb" };
     const mongoBucketConfig: BucketConfiguration = new MongoBucketConfiguration(mongoConfig);
 
-    const bucket: Bucket = new Bucket(mongoBucketConfig);
+    const bucket: Bucket = new Bucket(mongoBucketConfig, "test_bucket");
 
     const db: AppDatabase = await bucket.initialize();
 
@@ -180,7 +182,7 @@ test("Mongo_Find_Many", async() => {
 
     const results = await mongoCollection.insertMany(newUsers);
 
-    const finds: [string|number, IUser][] = newUsers.map((user: IUser) => [user.id, user]);
+    const finds: (string|number)[] = newUsers.map((user: IUser) => user.id);
 
     const findResult = await collection.readManyById(finds);
     console.log(findResult);
