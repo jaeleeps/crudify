@@ -31,7 +31,7 @@ test("Firebase_Collection_DeleteOne", async () => {
     const firestoreCollection: CollectionReference<IUser> = db.collection('users') as CollectionReference<IUser>;
     const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-    const result = collection.insertOne<IUser>(newUser.id, newUser);
+    const result = collection.createOne<IUser>(newUser.id, newUser);
     console.log(result);
 
     let userRef: FirebaseFirestore.DocumentSnapshot<IUser> = await firestoreCollection.doc(newUser.id).get();
@@ -41,7 +41,7 @@ test("Firebase_Collection_DeleteOne", async () => {
     expect(ogUser.name).toBe(newUser.name);
     expect(ogUser.email).toBe(newUser.email);
 
-    const updatedResult = collection.deleteOneByID(ogUser.id);
+    const updatedResult = collection.deleteOneById(ogUser.id);
 
     userRef = await firestoreCollection.doc(newUser.id).get();
     const user: IUser = userRef.data() as IUser;
@@ -75,7 +75,8 @@ test("Firebase_Collection_DeleteMany", async () => {
         expect(userData.name).toBe(ogNames[i]);
     }
 
-    const testResult = await collection.deleteManyByID(ogIds);
+    const testResult = await collection.deleteManyById(ogIds);
+
     console.log(testResult);
     for (let i = 0; i <count; i++) {
         const deletedUser = await firestoreCollection.doc(ogIds[i]).get();
@@ -122,13 +123,13 @@ test("Mongo_Collection_DeleteOne", async () => {
     const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
     const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
-    const result = await collection.insertOne<IUser>(newUser.id, newUser);
+    const result = await collection.createOne<IUser>(newUser.id, newUser);
     const userID = result.insertedId;
     console.log(result);
 
     const user = await mongoCollection.findOne({ _id: userID });
 
-    const updateResult = await collection.deleteOneByID(userID);
+    const updateResult = await collection.deleteOneById(userID);
     console.log(updateResult);
 
     const deletedUser = await mongoCollection.findOne({_id: userID});
@@ -163,7 +164,7 @@ test("Mongo_Collection_DeleteMany", async () => {
     }
 
     console.log(userIDs);
-    const updateResult = await collection.deleteManyByID(userIDs);
+    const updateResult = await collection.deleteManyById(userIDs);
     console.log(updateResult);
 
     const afterUsers : string[] = [];
