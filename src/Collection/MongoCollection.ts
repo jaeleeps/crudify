@@ -5,10 +5,13 @@ import {
   Condition,
   Db,
   DeleteResult,
-  Filter, FindCursor,
+  Filter,
+  FindCursor,
   InsertManyResult,
-  InsertOneResult, ObjectId,
-  OptionalUnlessRequiredId, RegExpOrString,
+  InsertOneResult,
+  ObjectId,
+  OptionalUnlessRequiredId,
+  RegExpOrString,
   UpdateResult,
   WithId,
 } from 'mongodb';
@@ -46,7 +49,7 @@ export class MongoCollection<T> extends Collection<T> {
 
   public async readManyById<T>(ids: (string | number)[]): Promise<(WithId<T> | null)[]> {
     const colRef: MongoDbCollection<T> = this.ref as unknown as MongoDbCollection<T>;
-    const findCursor: FindCursor = await colRef.find( { id : {"$in" : ids } as unknown as RegExpOrString<WithId<T>>} );
+    const findCursor: FindCursor = await colRef.find({ id: { $in: ids } as unknown as RegExpOrString<WithId<T>> });
     const findResults = findCursor.toArray();
     return findResults;
   }

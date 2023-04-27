@@ -1,4 +1,3 @@
-
 import { BucketConfiguration } from '../Bucket/BucketConfiguration';
 import { AppCollection, AppDatabase, DatabaseType, IDatabaseConfiguration } from '../type/database.enum';
 
