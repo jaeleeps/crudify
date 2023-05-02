@@ -31,5 +31,5 @@ export abstract class Collection<T> {
   // Delete
 
   public abstract deleteOneById<T>(id: string | number): any;
-  public abstract deleteManyById<T>(ids: [string | number][]): any;
+  public abstract deleteManyById<T>(ids: [string | number | object][]): any;
 }

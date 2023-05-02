@@ -82,7 +82,7 @@ export class FirestoreCollection<T> extends Collection<T> {
     return result;
   }
 
-  public async deleteManyById<T>(ids: [string | number][]): Promise<FirebaseFirestore.WriteResult[]> {
+  public async deleteManyById<T>(ids: [string | number | object][]): Promise<FirebaseFirestore.WriteResult[]> {
     const colRef: CollectionReference<T> = this.ref as unknown as CollectionReference<T>;
     const deletePromises = ids.map((id) => {
       const docId: string = typeof id === 'string' ? id : id.toString();
