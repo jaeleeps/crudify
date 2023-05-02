@@ -10,7 +10,7 @@ import { IMongoConfiguration } from '../src/Bucket/MongoConfiguration.interface'
 import { MongoBucketConfiguration } from '../src/Bucket/MongoBucketConfiguration';
 import { CollectionReference } from '@google-cloud/firestore';
 import { Collection } from '../src/Collection/Collection';
-import {ObjectId} from "mongodb";
+import {Filter, ObjectId} from "mongodb";
 
 
 test("Firebase_Collection_UpdateOne", async () => {
@@ -124,11 +124,13 @@ test("Mongo_Collection_UpdateOne", async () => {
   const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
+  const deleteResult = mongoCollection.deleteMany({ id: { $in: [ newUser.id ] } });
+
   const result = await collection.createOne<IUser>(newUser.id, newUser);
-  const userID = result.insertedId;
+  const userID = newUser.id;
   console.log(result);
 
-  const user = await mongoCollection.findOne({ _id: userID });
+  const user = await mongoCollection.findOne({ id: userID });
 
   const updatedUser: IUser = {
     id: '1234',
@@ -141,7 +143,7 @@ test("Mongo_Collection_UpdateOne", async () => {
   const updateResult = await collection.updateOneById(userID, updatedUser);
   console.log(updateResult);
 
-  const confirmupdatedUser = await mongoCollection.findOne({_id: userID});
+  const confirmupdatedUser = await mongoCollection.findOne({id: userID});
 
   console.log(confirmupdatedUser);
   expect(confirmupdatedUser.id).toBe(updatedUser.id);
@@ -178,29 +180,32 @@ test("Mongo_Collection_UpdateMany", async () => {
   const mongoCollection: MongoDbCollection<IUser> = db.collection<IUser>('users');
   const collection: Collection<IUser> = bucket.addCollection<IUser>('users');
 
+  const deleteResult = mongoCollection.deleteMany({ id: { $in: newUsers.map(user => user.id) } });
+
   const results = await mongoCollection.insertMany(newUsers);
 
 
   const originalUsers = await mongoCollection.find({}).limit(5).toArray();
-  const userIDs : ObjectId[] = [];
+  console.log(originalUsers)
+  const userIDs : string[] = [];
   const oguserNames : string[] = [];
   const updatingUsers  = [];
 
-
   for (let i = 0; i < count; i++) {
-    userIDs.push(originalUsers[i]._id);
+    userIDs.push(originalUsers[i].id);
     oguserNames.push(originalUsers[i].name);
     originalUsers[i].name = originalUsers[i].name + " Updated" + i;
-    updatingUsers.push([originalUsers[i]._id, originalUsers[i]]);
+    updatingUsers.push([originalUsers[i].id, originalUsers[i]]);
   }
 
-  console.log(userIDs);
+  console.log(userIDs, updatingUsers);
   const updateResult = await collection.updateManyById(updatingUsers);
   console.log(updateResult);
 
   const afterNames : string[] = [];
   for (let i = 0; i < count; i++) {
-    const after = await mongoCollection.findOne({_id: userIDs[i]});
+    // const after = await mongoCollection.findOne({id: userIDs[i]});
+    const after = await collection.readOneById(userIDs[i]);
     afterNames.push(after.name);
   }
   console.log(afterNames);
